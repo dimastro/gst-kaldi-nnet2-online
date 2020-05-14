@@ -1288,13 +1288,14 @@ static void gst_kaldinnet2onlinedecoder_partial_result(
   std::vector<int32> words;
   std::vector<int32> alignment;
   LatticeWeight weight;
-  ConvertLattice(lat, &clat);  
   FullFinalResult full_final_result;
+  CompactLattice clat;
+  ConvertLattice(lat, &clat);
   full_final_result.nbest_results = gst_kaldinnet2onlinedecoder_nbest_results(filter, clat);
-  std::string full_final_result_as_json =
-      gst_kaldinnet2onlinedecoder_full_final_result_to_json(filter, full_final_result);
   GetLinearSymbolSequence(lat, &alignment, &words, &weight);
   std::string transcript = gst_kaldinnet2onlinedecoder_words_to_string(filter, words);
+  std::string full_final_result_as_json =
+      gst_kaldinnet2onlinedecoder_full_final_result_to_json(filter, full_final_result);
   GST_DEBUG_OBJECT(filter, "Partial: %s", transcript.c_str());
   if (transcript.length() > 0) {
     /* Emit a signal for applications. */
