@@ -1158,8 +1158,7 @@ static std::vector<NBestResult> gst_kaldinnet2onlinedecoder_nbest_results(
 
 static std::string gst_kaldinnet2onlinedecoder_full_final_result_to_json(
     Gstkaldinnet2onlinedecoder * filter,
-    const FullFinalResult &full_final_result,
-    bool partial=false) {
+    const FullFinalResult &full_final_result) {
 
   json_t *root = json_object();
   json_t *result_json_object = json_object();
@@ -1167,11 +1166,7 @@ static std::string gst_kaldinnet2onlinedecoder_full_final_result_to_json(
 
   json_object_set_new( root, "result", result_json_object);
 
-  if (partial) {
-    json_object_set_new( result_json_object, "final", json_false());
-  } else {
-    json_object_set_new( result_json_object, "final", json_true());
-  }
+  json_object_set_new( result_json_object, "final", json_true());
 
   if (full_final_result.nbest_results.size() > 0) {
     BaseFloat frame_shift = filter->feature_info->FrameShiftInSeconds();
@@ -1300,7 +1295,7 @@ static void gst_kaldinnet2onlinedecoder_partial_result(
   GetLinearSymbolSequence(lat, &alignment, &words, &weight);
   std::string transcript = gst_kaldinnet2onlinedecoder_words_to_string(filter, words);
   std::string full_final_result_as_json =
-      gst_kaldinnet2onlinedecoder_full_final_result_to_json(filter, full_final_result, true);
+      gst_kaldinnet2onlinedecoder_full_final_result_to_json(filter, full_final_result);
   GST_DEBUG_OBJECT(filter, "Partial: %s", transcript.c_str());
   if (transcript.length() > 0) {
     /* Emit a signal for applications. */
